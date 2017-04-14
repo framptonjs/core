@@ -1,0 +1,24 @@
+{
+  "name": "@frampton/common",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index",
+  "scripts": {
+    "build": "rm -rf ./dist/; tsc -p ./tsconfig.json;",
+    "build:test": "rm -rf ./testing/; tsc -p ./tsconfig.test.json;",
+    "test": "npm run build:test; mocha --globals window,global ./testing/tests/index.js;"
+  },
+  "author": "Kevin Greene <hightimesteddy@gmail.com>",
+  "files": [
+    "dist/"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chai": "3.4.34",
+    "@types/mocha": "2.2.39",
+    "chai": "3.5.0",
+    "mocha": "3.2.0",
+    "typescript": "2.2.2"
+  }
+}

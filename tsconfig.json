@@ -1,0 +1,15 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "ES6",
+    "rootDir": ".",
+    "outDir": "./dist",
+    "noImplicitAny": true,
+    "declaration": true,
+    "moduleResolution": "Node"
+  },
+  "files": [
+    "./index.ts"
+  ]
+}

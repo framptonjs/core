@@ -1,0 +1,13 @@
+import curry, { Curried2Result } from '../utils/curry';
+
+/**
+ * @name contains
+ * @method
+ * @memberof Frampton.List
+ * @param {Array} xs
+ * @param {*}   obj
+ * @retruns {Boolean}
+ */
+export default curry(<T>(xs: Array<T>, obj: any): boolean => {
+  return (xs.indexOf(obj) > -1);
+});
