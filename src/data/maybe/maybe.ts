@@ -7,7 +7,6 @@ export type MaybePredicate<T> =
 
 
 export interface Maybe<T> {
-  _value: T;
   get(): T;
   getOrElse(val: T): T;
   fork(just: (val: T) => T, nothing: () => T): T;
@@ -23,7 +22,7 @@ export interface Maybe<T> {
 
 
 export class Just<T> implements Maybe<T> {
-  _value: T;
+  private _value: T;
 
   constructor(val: T) {
     this._value = val;
@@ -44,10 +43,10 @@ export class Just<T> implements Maybe<T> {
    * @param {Frampton.Data.Maybe} mb
    * @returns {Frampton.Data.Maybe}
    */
-  ap<A,B>(this: Maybe<(val: A) => B>, maybe: Maybe<A>): Maybe<B> {
-    const self: Maybe<(val: A) =>B> = this;
+  ap<A,B>(this: Just<(val: A) => B>, maybe: Maybe<A>): Maybe<B> {
+    const self: Just<(val: A) =>B> = this;
     if (maybe.isJust()) {
-      return new Just<B>(self._value(maybe._value));
+      return new Just<B>(self._value((<Just<A>>maybe)._value));
     } else {
       return new Nothing<B>();
     }
@@ -181,11 +180,6 @@ export class Just<T> implements Maybe<T> {
 
 
 export class Nothing<T> implements Maybe<T> {
-  _value: T;
-
-  constructor() {
-    this._value = null;
-  }
 
   toString(): string {
     return 'Nothing';
