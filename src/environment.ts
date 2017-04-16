@@ -7,8 +7,6 @@ const env: any =
 
 env.__Frampton = {};
 
-env.__Frampton.VERSION = '{-- VERSION_PLACEHOLDER --}';
-
 env.__Frampton.TEST = 'test';
 
 env.__Frampton.DEV = 'dev';

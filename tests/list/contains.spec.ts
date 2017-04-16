@@ -3,7 +3,7 @@ import { assert } from 'chai';
 
 
 describe('List', function() {
-  describe('List.contains', function() {
+  describe('contains', function() {
     it('should return true if array contains value', function() {
       const xs = [1,2,3];
       const actual = contains(xs, 3);

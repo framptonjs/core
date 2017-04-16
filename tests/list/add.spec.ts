@@ -3,7 +3,7 @@ import { assert } from 'chai';
 
 
 describe('List', function() {
-  describe('List.add', function() {
+  describe('add', function() {
     it('should return new array with value added', function() {
       const xs = [1,2,3];
       const actual = add(xs, 4);

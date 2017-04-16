@@ -3,7 +3,7 @@ import { assert } from 'chai';
 
 
 describe('List', function() {
-  describe('List.at', function() {
+  describe('at', function() {
     it('should return item at given index', function() {
       const xs: Array<number> = [1,2,3];
       const actual: any = at(1, xs);

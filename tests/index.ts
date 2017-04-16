@@ -10,6 +10,8 @@ import './list/append.spec';
 import './list/at.spec';
 import './list/contains.spec';
 import './list/diff.spec';
+import './list/split.spec';
+import './list/zip.spec';
 
 // OBJECT
 import './object/as-list.spec';
@@ -21,3 +23,5 @@ import './object/values.spec';
 // UTILS
 import './utils/compose.spec';
 import './utils/curry.spec';
+import './utils/flip-args.spec';
+import './utils/has-length.spec';

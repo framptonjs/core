@@ -65,6 +65,7 @@ sig2.get();
 
 
 // Modify a signal
+
 // All methods return new signals
 // Filter values
 const greaterThanFive: Signal<number> =
@@ -85,10 +86,10 @@ const plusOne: Signal<number> =
 
 
 // Filter with another signal.
+
 // This signal will only continue if sig has a truthy value.
 const conditionMet: Signal<number> =
   sig2.and(sig);
-
 
 // This signal will only continue if sig has a falsy value.
 const notCondition: Signal<number> =
