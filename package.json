@@ -1,9 +1,9 @@
 {
-  "name": "@frampton/common",
+  "name": "@frampton/core",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
-  "typings": "dist/index",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
   "scripts": {
     "build": "rm -rf ./dist/; tsc -p ./tsconfig.json;",
     "build:test": "rm -rf ./testing/; tsc -p ./tsconfig.test.json;",
