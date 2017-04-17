@@ -15,16 +15,16 @@ import { Task } from './task';
  * @memberof Frampton.Task
  * @static
  * @param {Frampton.Signals.Signal} tasks - Signal of Tasks to execute
- * @param {Function} value - A function to pass the resolve values to
+ * @param {Function} onValue - A function to pass the resolve values to
  */
-export default function execute<T>(tasks: Signal<Task<any,T,any>>, value: (val: T) => void): void {
+export default function execute<T>(tasks: Signal<Task<any,T,any>>, onValue: (val: T) => void): void {
   tasks.onValue((task: Task<any,T,any>): void => {
     task.run({
       reject(err: any): void {
         warn('Error running task: ', err);
       },
       resolve(val: T): void {
-        value(val);
+        onValue(val);
       },
       progress(val: any): void {
         log('Task progress: ', val);
