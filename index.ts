@@ -6,6 +6,7 @@ import * as FramptonEnv from './src/environment';
 
 export * from './src/data';
 export * from './src/utils';
+export * from './src/string';
 export const Logging = FramptonLogging;
 export const List = FramptonList;
 export const Object = FramptonObject;

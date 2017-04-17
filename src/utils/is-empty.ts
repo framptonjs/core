@@ -10,9 +10,13 @@ import isNothing from './is-nothing';
  * @returns {Boolean}
  */
 export default function is_empty(obj: any): boolean {
-  return (
-    isNothing(obj) ||
-    !obj.length ||
-    obj.length === 0
-  );
+  if (typeof obj === 'string') {
+    return obj.trim().length === 0;
+  } else {
+    return (
+      isNothing(obj) ||
+      !obj.length ||
+      obj.length === 0
+    );
+  }
 }

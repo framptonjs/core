@@ -20,6 +20,9 @@ import './object/keys.spec';
 import './object/set.spec';
 import './object/values.spec';
 
+// STRING
+import './string/capitalize.spec';
+
 // UTILS
 import './utils/compose.spec';
 import './utils/curry.spec';

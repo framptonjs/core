@@ -8,7 +8,7 @@ export { default as immediate } from './immediate';
 export { default as isArray } from './is-array';
 export { default as isBoolean } from './is-boolean';
 export { default as isDefined } from './is-defined';
-export { default as isEmtpy } from './is-empty';
+export { default as isEmpty } from './is-empty';
 export { default as isEqual } from './is-equal';
 export { default as isFalse } from './is-false';
 export { default as isFunction } from './is-function';
