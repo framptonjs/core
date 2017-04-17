@@ -39,7 +39,7 @@ export class Signal<T> {
   hasValue: boolean;
 
   static create<T>(initial?: T): Signal<T> {
-    return new Signal<T>(null, [], initial);
+    return new Signal<T>(emptyUpdate, [], initial);
   }
 
   /**
@@ -70,11 +70,7 @@ export class Signal<T> {
     this._value = initial;
     this._isQueued = false;
     this._lastUpdater = null;
-    this._update = (
-      typeof update === 'function' ?
-        update :
-        emptyUpdate
-    );
+    this._update = update;
 
     for (let i = 0; i < parents.length; i++) {
       parents[i].children.push(this);

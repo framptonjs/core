@@ -15,10 +15,7 @@ Frampton.Data module exposes a few abstract data types that make working functio
 A Signal is a value that changes over time. Signals provide methods to alter their values or to be alerted to the changing state of those values.
 
 ```
-import * as Frampton from '@frampton/core';
-
-
-const { Signal } = Frampton.Data;
+import { Signal } from '@frampton/core';
 
 
 // create a new signal
@@ -132,10 +129,7 @@ const counter: Signal<number> =
 A Result is used to represent values that can be the result of successful or failed computations. It is analogous to Either in some functional programming languages. Result has two subclasses, Success and Failure.
 
 ```
-import * as Frampton from '@frampton/core';
-
-
-const Result = Frampton.Data.Result;
+import { Result } from '@frampton/core';
 
 
 const success: Success<number> =
@@ -220,10 +214,7 @@ A Maybe is used to represent a value that may be null or undefined. This gives y
 In Frampton Maybes are an interface that is implemented by Just and Nothing. Here we're using Haskell naming conventions. A Just represents a value and a Nothing is a missing value.
 
 ```
-import * as Frampton from '@frampton/core';
-
-
-const Maybe = Frampton.Data.Maybe;
+import { Maybe } from '@frampton/core';
 
 
 const maybeOne: Maybe<number> =
@@ -277,10 +268,7 @@ A Task is essentially an IO monad. Use it to wrap IO operations that may fail. T
 Tasks are lazy. A task can be described without being run.
 
 ```
-import * as Frampton from '@frampton/core';
-
-
-const Task = Frampton.Data.Task;
+import { Task } from '@frampton/core';
 
 
 // A Task takes a function to run. When the function is run it will receive

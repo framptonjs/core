@@ -26,6 +26,27 @@ describe('Task', function() {
     });
   });
 
+  describe('sync', function() {
+    it('should create a task that runs syncronously', function(done) {
+      var test = 0;
+      const task = Task.sync((sinks) => {
+        test = 5;
+        sinks.resolve(null);
+      });
+
+      task.run({
+        reject: noop,
+        resolve(val) {
+          assert.equal(test, 5);
+          done();
+        },
+        progress: noop
+      });
+
+      assert.equal(test, 5);
+    });
+  });
+
   describe('join', function() {
     it('should flatten nested Tasks', function(done) {
       const task = Task.create((sinks) => {
