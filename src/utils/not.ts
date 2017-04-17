@@ -1,4 +1,4 @@
-import curry, { Curried2Result } from './curry';
+import { curry, Curried2Result } from './curry';
 
 
 /**

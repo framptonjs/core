@@ -1,4 +1,4 @@
-import * as Signal from '../../src/data/signal';
+import { Signal } from '../../src/data';
 import { assert } from 'chai';
 
 
@@ -43,7 +43,7 @@ describe('Signal', function() {
         count += 1;
       });
 
-      Signal.push(sig, 1);
+      sig.push(1);
     });
   });
 
@@ -66,7 +66,7 @@ describe('Signal', function() {
         count += 1;
       });
 
-      Signal.push(sig, 3);
+      sig.push(3);
     });
 
     it('should call given function with signal value when value changes', function() {
@@ -84,7 +84,7 @@ describe('Signal', function() {
         count += 1;
       });
 
-      Signal.push(sig, 1);
+      sig.push(1);
     });
   });
 
@@ -109,7 +109,7 @@ describe('Signal', function() {
         count += 1;
       });
 
-      Signal.push(sig, 1);
+      sig.push(1);
     });
   });
 
@@ -118,7 +118,7 @@ describe('Signal', function() {
       const sig = Signal.create<number>();
       const sig1 = sig.map((val) => val + 5);
 
-      Signal.push(sig, 1);
+      sig.push(1);
 
       assert.equal(sig1.get(), 6);
     });
@@ -129,9 +129,9 @@ describe('Signal', function() {
       const sig = Signal.create<number>();
       const sig1 = sig.filter((val) => val > 5);
 
-      Signal.push(sig, 1);
-      Signal.push(sig, 8);
-      Signal.push(sig, 3);
+      sig.push(1);
+      sig.push(8);
+      sig.push(3);
 
       assert.equal(sig1.get(), 8);
     });
@@ -141,8 +141,8 @@ describe('Signal', function() {
       const sig1 = sig.filter((val) => val > 5);
       const sig2 = sig1.map((val) => val + 1);
 
-      Signal.push(sig,9);
-      Signal.push(sig,3);
+      sig.push(9);
+      sig.push(3);
 
       assert.equal(sig1.get(), 9);
       assert.equal(sig2.get(), 10);
@@ -154,11 +154,11 @@ describe('Signal', function() {
       const sig = Signal.create<string>();
       const sig1 = sig.fold((acc, next) => acc + next, '');
 
-      Signal.push(sig, 'h');
-      Signal.push(sig, 'e');
-      Signal.push(sig, 'l');
-      Signal.push(sig, 'l');
-      Signal.push(sig, 'o');
+      sig.push('h');
+      sig.push('e');
+      sig.push('l');
+      sig.push('l');
+      sig.push('o');
 
       assert.equal(sig1.get(), 'hello');
     });
@@ -176,11 +176,11 @@ describe('Signal', function() {
         done();
       });
 
-      Signal.push(sig, 1);
-      Signal.push(sig, 2);
-      Signal.push(sig, 3);
-      Signal.push(sig, 4);
-      Signal.push(sig, 5);
+      sig.push(1);
+      sig.push(2);
+      sig.push(3);
+      sig.push(4);
+      sig.push(5);
     });
   });
 
@@ -190,19 +190,19 @@ describe('Signal', function() {
       const sig1 = sig.dropRepeats();
       const counter = sig1.fold((acc, next) => acc + 1, 0);
 
-      Signal.push(sig, 1);
-      Signal.push(sig, 1);
-      Signal.push(sig, 1);
+      sig.push(1);
+      sig.push(1);
+      sig.push(1);
 
       assert.equal(counter.get(), 1);
 
-      Signal.push(sig, 2);
-      Signal.push(sig, 2);
-      Signal.push(sig, 2);
+      sig.push(2);
+      sig.push(2);
+      sig.push(2);
 
       assert.equal(counter.get(), 2);
 
-      Signal.push(sig, 3);
+      sig.push(3);
 
       assert.equal(counter.get(), 3);
     });
@@ -214,19 +214,19 @@ describe('Signal', function() {
       const sig1 = Signal.create();
       const sig2 = sig.merge(sig1);
 
-      Signal.push(sig, 1);
+      sig.push(1);
       assert.equal(sig2.get(), 1);
 
-      Signal.push(sig, 2);
+      sig.push(2);
       assert.equal(sig2.get(), 2);
 
-      Signal.push(sig1, 3);
+      sig.push(3);
       assert.equal(sig2.get(), 3);
 
-      Signal.push(sig, 4);
+      sig.push(4);
       assert.equal(sig2.get(), 4);
 
-      Signal.push(sig1, 5);
+      sig.push(5);
       assert.equal(sig2.get(), 5);
     });
   });

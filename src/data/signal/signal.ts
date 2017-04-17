@@ -1,12 +1,9 @@
 import { log } from '../../logging';
+import { push } from './runtime';
+import { curry, Curried2Result } from '../../utils';
 
 
 export function emptyUpdate<T>(sig: Signal<T>): void {}
-
-
-export function create<T>(initial?: T): Signal<T> {
-  return new Signal<T>(null, [], initial);
-}
 
 
 /**
@@ -56,6 +53,14 @@ export class Signal<T> {
   children: Array<Signal<any>>;
   hasValue: boolean;
 
+  static create<T>(initial?: T): Signal<T> {
+    return new Signal<T>(null, [], initial);
+  }
+
+  static push = curry(<B>(sig: Signal<B>, val: B): void => {
+    push(sig, val);
+  })
+
   constructor(update: SignalUpdater<T>, parents: Array<Signal<any>>, initial: T) {
     // Public
     this.value = initial;
@@ -79,6 +84,10 @@ export class Signal<T> {
 
   toString(): string {
     return `Signal(${this.value})`;
+  }
+
+  push(val: T): void {
+    push(this, val);
   }
 
   get(): T {

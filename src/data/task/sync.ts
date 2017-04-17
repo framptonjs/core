@@ -7,6 +7,10 @@ import { Task, TaskComputation, TaskSinks } from './task';
  */
 export class SyncTask<E,V,P> extends Task<E,V,P> {
 
+  static create<E,V,P>(computation: TaskComputation<E,V,P>) {
+    return new SyncTask<E,V,P>(computation);
+  }
+
   constructor(computation: TaskComputation<E,V,P>) {
     super(computation);
   }
@@ -40,8 +44,4 @@ export class SyncTask<E,V,P> extends Task<E,V,P> {
       sinks.reject(e);
     }
   }
-}
-
-export function create<E,V,P>(computation: TaskComputation<E,V,P>) {
-  return new SyncTask<E,V,P>(computation);
 }

@@ -1,4 +1,4 @@
-import * as Maybe from '../../src/data/maybe';
+import { Maybe } from '../../src/data';
 import { assert } from 'chai';
 
 

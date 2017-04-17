@@ -1,4 +1,4 @@
-import curry, { Curried2Result } from '../utils/curry';
+import { curry, Curried2Result } from '../utils';
 
 /**
  * @name append

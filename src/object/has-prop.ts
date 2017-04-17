@@ -1,6 +1,7 @@
-import curry, { Curried2Result } from '../utils/curry';
+import { curry, Curried2Result } from '../utils';
 import isSomething from '../utils/is-something';
 import get from './get';
+
 
 /**
  * hasProp :: String -> Object -> Boolean

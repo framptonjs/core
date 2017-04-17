@@ -45,10 +45,10 @@ function curry_internal(fn: Function, ...args: Array<any>): Function {
 }
 
 
-export default function curry<A,B,C>(fn: (a: A, b: B) => C): Curried2Result<A,B,C>;
-export default function curry<A,B,C,D>(fn: (a: A, b: B, c: C) => D): Curried3Result<A,B,C,D>;
-export default function curry<A,B,C,D,E>(fn: (a: A, b: B, c: C, d: D) => E): Curried4Result<A,B,C,D,E>;
-export default function curry<A,B,C,D,E,F>(fn: (a: A, b: B, c: C, d: D, e: E) => F): Curried5Result<A,B,C,D,E,F>;
-export default function curry(fn: any) {
+export function curry<A,B,C>(fn: (a: A, b: B) => C): Curried2Result<A,B,C>;
+export function curry<A,B,C,D>(fn: (a: A, b: B, c: C) => D): Curried3Result<A,B,C,D>;
+export function curry<A,B,C,D,E>(fn: (a: A, b: B, c: C, d: D) => E): Curried4Result<A,B,C,D,E>;
+export function curry<A,B,C,D,E,F>(fn: (a: A, b: B, c: C, d: D, e: E) => F): Curried5Result<A,B,C,D,E,F>;
+export function curry(fn: any) {
   return curry_internal(fn);
 }

@@ -1,5 +1,4 @@
-import * as Task from '../../src/data/task';
-import * as Signal from '../../src/data/signal';
+import { Task, Signal } from '../../src/data';
 import { noop } from '../../src/utils';
 import { assert } from 'chai';
 
@@ -219,8 +218,8 @@ describe('Task', function() {
   });
 
   describe('execute', function() {
-    it('should create a Task that emits delayed value after time', function(done) {
-      const tasks = Signal.create<Task.Task<any,number,any>>();
+    it('should execute a Signal of Tasks and push values to callback', function(done) {
+      const tasks = Signal.create<Task<any,number,any>>();
       const toRun = Task.succeed<number>(5);
       const responses = Signal.create<number>();
       const expected = 5;

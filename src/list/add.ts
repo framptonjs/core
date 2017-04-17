@@ -1,6 +1,7 @@
-import curry, { Curried2Result } from '../utils/curry';
+import { curry, Curried2Result } from '../utils';
 import contains from './contains';
 import append from './append';
+
 
 /**
  * @name addToList

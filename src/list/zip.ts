@@ -1,4 +1,5 @@
-import curry, { Curried2Result } from '../utils/curry';
+import { curry, Curried2Result } from '../utils';
+
 
 /**
  * zip :: List a -> List b - List (a, b)

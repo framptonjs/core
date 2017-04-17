@@ -6,26 +6,24 @@ export type MaybePredicate<T> =
   (val: T) => boolean;
 
 
-export interface Maybe<T> {
-  get(): T;
-  getOrElse(val: T): T;
-  fork(just: (val: T) => T, nothing: () => T): T;
-  join<A>(this: Maybe<Maybe<A>>): Maybe<A>;
-  ap<A,B>(this: Maybe<(val: A) => B>, maybe: Maybe<A>): Maybe<B>;
-  map<A>(mapping: MaybeMapping<T,A>): Maybe<A>;
-  chain<A>(mapping: (val: T) => Maybe<A>): Maybe<A>;
-  filter(predicate: (val: T) => boolean): Maybe<T>;
-  toString(): string;
-  isNothing(): boolean;
-  isJust(): boolean;
-}
+export class Maybe<T> {
+  protected _value: T;
+
+  static fromNullable<T>(val: T): Maybe<T> {
+    if (val === null || val === undefined) {
+      return new Nothing<T>();
+    } else {
+      return new Just<T>(val);
+    }
+  }
+
+  static nothing<T>(): Nothing<T> {
+    return new Nothing<T>();
+  }
 
 
-export class Just<T> implements Maybe<T> {
-  private _value: T;
-
-  constructor(val: T) {
-    this._value = val;
+  static just<T>(val: T): Just<T> {
+    return new Just<T>(val);
   }
 
   toString(): string {
@@ -179,7 +177,22 @@ export class Just<T> implements Maybe<T> {
 }
 
 
-export class Nothing<T> implements Maybe<T> {
+export class Just<T> extends Maybe<T> {
+  static create<B>(val: B): Just<B> {
+    return new Just<B>(val);
+  }
+
+  constructor(val: T) {
+    super();
+    this._value = val;
+  }
+}
+
+
+export class Nothing<T> extends Maybe<T> {
+  static create<B>(): Nothing<B> {
+    return new Nothing<B>();
+  }
 
   toString(): string {
     return 'Nothing';

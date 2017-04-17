@@ -1,4 +1,4 @@
-import * as Result from '../../src/data/result';
+import { Result } from '../../src/data';
 import { assert } from 'chai';
 
 

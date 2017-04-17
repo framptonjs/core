@@ -1,6 +1,7 @@
-import curry, { Curried3Result } from '../utils/curry';
+import { curry, Curried3Result } from '../utils';
 import isString from '../utils/is-string';
 import getKeys from './keys';
+
 
 function setValue(prop: string, value: any, oldObj: any, newObj: any) {
   if (!isString(prop)) {
@@ -33,6 +34,7 @@ function setValue(prop: string, value: any, oldObj: any, newObj: any) {
 
   return newObj;
 }
+
 
 /**
  * set :: String -> Any -> Object -> Object

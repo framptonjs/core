@@ -1,6 +1,7 @@
-import curry, { Curried2Result} from '../utils/curry';
+import { curry, Curried2Result} from '../utils';
 import isNothing from '../utils/is-nothing';
 import isPrimitive from '../utils/is-primitive';
+
 
 /**
  * get :: String -> Object -> Any

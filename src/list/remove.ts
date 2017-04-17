@@ -1,4 +1,5 @@
-import curry, { Curried2Result } from '../utils/curry';
+import { curry, Curried2Result } from '../utils';
+
 
 /**
  * remove :: List a -> Any a -> List a
