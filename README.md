@@ -268,3 +268,95 @@ const safeOne: number =
 const safeNothing: number =
   maybeNothing.getOrElse(5); // -> 5
 ```
+
+
+### Frampton.Data.Task
+
+A Task is essentially an IO monad. Use it to wrap IO operations that may fail. Tasks are particularly good for wrapping async operations. Much like promises.
+
+Tasks are lazy. A task can be described without being run.
+
+```
+import * as Frampton from '@frampton/core';
+
+
+const Task = Frampton.Data.Task;
+
+
+// A Task takes a function to run. When the function is run it will receive
+// an object with callbacks for different events in the life of the task.
+// A Task has three type parameters, one for error, success and progress.
+const waitTwoSeconds: Task<Error,string,never> =
+  Task((sinks) => {
+    setTimeout(() => {
+      sinks.resolve('2 seconds passes');
+    }, 2000);
+  });
+
+
+// This just describes the task. To run it...
+waitTwoSeconds.run({
+  resolve(msg: string): void {
+    console.log(msg);
+  },
+  reject(err: Error): void {
+    console.log('err: ', err);
+  }
+});
+
+
+// To filter the results of a task (a resolve becomes a reject)
+const random: Task<number,number,never> =
+  Task.create((sinks) => {
+    sinks.resolve(Math.random() * 100);
+  });
+
+const randomOverFifty: Task<number,number,never> =
+  random.filter((val) => val > 50);
+
+
+// To map a result to another value...
+// After 2 seconds emits a 5.
+const delayedFive: Task<Error,number,never> =
+  waitTwoSeconds.map(5);
+
+
+// Map can also take a function
+const delayedFunc: Task<Error,string,never> =
+  waitTwoSeconds.map((msg: string): string => {
+    return msg.toUpperCase();
+  });
+
+
+// To recover from an error. A reject becomes a resolve.
+const httpGet =
+  (url: string): Task<Error,any,never> =>
+    Task.create((sinks) => {
+      $.get(url).then((res) => {
+        sinks.resolve(res);
+      }, (err) => {
+        sinks.reject(err);
+      });
+    });
+
+const neverFailRequest: Task<never,any,never> =
+  httpGet('http://fake.com/api/posts')
+    .recover((err) => {
+      // on failure return an empty array.
+      return [];
+    });
+
+
+// Or, just supply a default value for failure
+const neverFailRequest: Task<never,any,never> =
+  httpGet('http://fake.com/api/posts').default([]);
+
+
+// Run tasks in parallel...
+Task.when(/* tasks to run */).run(...);
+
+
+// Run tasks in sequence...
+Task.sequence(/* tasks to run */).run(...);
+
+```
