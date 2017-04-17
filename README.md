@@ -5,7 +5,12 @@ Frampton is a library to assist writing JavaScript in a functional manner. Framp
 Frampton is written in Typescript and I believe functional programming is a nicer experience when strongly typed.
 
 
-## Frampton.Signal
+## Frampton.Data
+
+Frampton.Data module exposes a few abstract data types that make working functionally a little easier.
+
+
+### Frampton.Data.Signal
 
 A Signal is a value that changes over time. Signals provide methods to alter their values or to be alerted to the changing state of those values.
 
@@ -119,4 +124,147 @@ const counter: Signal<number> =
     return acc + 1;
   }, 0);
 
+```
+
+
+### Frampton.Data.Result
+
+A Result is used to represent values that can be the result of successful or failed computations. It is analogous to Either in some functional programming languages. Result has two subclasses, Success and Failure.
+
+```
+import * as Frampton from '@frampton/core';
+
+
+const Result = Frampton.Data.Result;
+
+
+const success: Success<number> =
+  Result.success(5);
+
+const failure: Failure<number> =
+  Result.failure(8);
+
+
+// map successful values
+const mapping = (val: number): number => val + 5;
+const mappedSuccess: Success<number> =
+  success.map(mapping); // -> 'Success(10)'
+
+const mappedFailure: Failure<number> =
+  failure.map(mapping); // -> 'Failure(8)'
+
+
+// map failed values
+const mapping = (val: number): number => val + 3;
+const mappedSuccess: Success<number> =
+  success.mapFailure(mapping); // -> 'Success(5)'
+
+const mappedFailure: Failure<number> =
+  failure.mapFailure(mapping); // -> 'Failure(11)'
+
+
+// filter Successes. Successes become Failures if the fail the predicate.
+// Failures are unaltered.
+const predicate = (val) => val > 10;
+const filteredSuccess: Result<number,number> =
+  success.filter(predicate); // -> 'Failure(5)'
+
+const filteredFailure: Failure<number> =
+  failure.filter(predicate); // -> 'Failure(8)'
+
+
+// Run a callback based on success or failure.
+const onSuccess = (val) => val + 3;
+const onFailure = (val) => val + 10;
+const successResult: number =
+  success.fork(onSuccess, onFailure); // -> 8
+
+const failureResult: number =
+  failure.fork(onSuccess, onFailure); // -> 18
+
+
+// Create Result from function that may throw
+const wrappedFn: Result<number,string> =
+  Result.fromThrowable((num) => {
+    if (num > 5) {
+      return num;
+    } else {
+      throw new Error('Too small');
+    }
+  });
+
+wrappedFn(10); // -> 'Success(10)'
+wrappedFn(2); // -> 'Failure(Too small)'
+
+
+// fromThrowable returns a curried function
+const testValues: Result<number,string> =
+  Result.fromThrowable((first, second) => {
+    if (first > second) {
+      throw new Error('Second too small');
+    } else {
+      return second;
+    }
+  });
+
+const testSix = testValues(6);
+testSix(8); // -> 'Success(8)';
+testSix(2); // -> 'Failure(Second too small)'
+```
+
+
+### Frampton.Data.Maybe
+
+A Maybe is used to represent a value that may be null or undefined. This gives you an interface for dealing with such values without having to constantly do null checks. It also specifies in the type that this is a value that may not exist.
+
+In Frampton Maybes are an interface that is implemented by Just and Nothing. Here we're using Haskell naming conventions. A Just represents a value and a Nothing is a missing value.
+
+```
+import * as Frampton from '@frampton/core';
+
+
+const Maybe = Frampton.Data.Maybe;
+
+
+const maybeOne: Maybe<number> =
+  Maybe.create(1); // -> 'Just(1)'
+
+const maybeNothing: Maybe<number> =
+  Maybe.create(null); // -> 'Nothing'
+
+
+// change the value of a Maybe
+const mapping = (val) => val + 2;
+const updatedOne = maybeOne.map(mapping); // -> 'Just(3)'
+const updatedNothing = maybeNothing.map(mapping); // 'Nothing'
+
+
+// filter the value of a Maybe
+const predicate = (val) => val > 2;
+const filteredOne = maybeOne.filter(predicate); // -> 'Nothing'
+const filteredUpdatedOne = updatedOne.filter(predicate); // -> 'Just(3)'
+const filteredNothing = updatedNothing.filter(predicate); // -> 'Nothing'
+
+
+// flatten a nested Maybe
+const nested = Maybe.create(Mabye.create(5)); // -> 'Just(Just(5))'
+cosnt flattened = nested.join(); // -> 'Just(5)'
+
+
+// join only removes one level of nesting
+const doubleNested = Maybe.create(Maybe.create(Mabye.create(5))); // -> 'Just(Just(Just(5)))'
+cosnt doubleFlattened = doubleNested.join(); // -> 'Just(Just(5))'
+
+
+// get the value from a Maybe
+const one = maybeOne.get(); // -> 1
+const nothing = maybeNothing.get(); // -> Error: can't get value of Nothing
+
+
+// safely get the value of a Maybe
+const safeOne: number =
+  maybeOne.getOrElse(5); // -> 1
+
+const safeNothing: number =
+  maybeNothing.getOrElse(5); // -> 5
 ```
