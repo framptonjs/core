@@ -1,1 +1,1 @@
-export * from './maybe';
+export { Maybe, Just, Nothing } from './maybe';

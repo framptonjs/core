@@ -5,7 +5,7 @@ import { assert } from 'chai';
 describe('Signal', function() {
   describe('create', function() {
     it('should create a signal with initial value', function() {
-      const actual: number = Signal.create(2).value;
+      const actual: number = Signal.create(2).get();
       const expected: number = 2;
 
       assert.equal(actual, expected);

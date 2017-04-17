@@ -6,21 +6,6 @@ import { curry, Curried2Result } from '../../utils';
 export function emptyUpdate<T>(sig: Signal<T>): void {}
 
 
-/**
- * @name mergeMany
- * @memberof Frampton.Signal
- * @method
- * @param {Frampton.Signal.Signal[]} parents - Signals to merge
- */
-export function merge<T>(...parents: Array<Signal<T>>): Signal<T> {
-  const initial = ((parents.length > 0) ? parents[0].value : undefined);
-
-  return new Signal((self: Signal<T>, sink: ValueSink<T>) => {
-    sink(self._lastUpdater.value);
-  }, parents, initial);
-}
-
-
 export type ValueSink<T> =
   (val: T) => void;
 
@@ -48,7 +33,7 @@ export class Signal<T> {
   _update: SignalUpdater<T>;
   _lastUpdater: Signal<any>;
   _isQueued: boolean;
-  value: T;
+  _value: T;
   parents: Array<Signal<any>>;
   children: Array<Signal<any>>;
   hasValue: boolean;
@@ -57,18 +42,32 @@ export class Signal<T> {
     return new Signal<T>(null, [], initial);
   }
 
+  /**
+   * @name mergeMany
+   * @memberof Frampton.Signal
+   * @method
+   * @param {Frampton.Signal.Signal[]} parents - Signals to merge
+   */
+  static merge<T>(...parents: Array<Signal<T>>): Signal<T> {
+    const initial = ((parents.length > 0) ? parents[0]._value : undefined);
+
+    return new Signal((self: Signal<T>, sink: ValueSink<T>) => {
+      sink(self._lastUpdater._value);
+    }, parents, initial);
+  }
+
   static push = curry(<B>(sig: Signal<B>, val: B): void => {
     push(sig, val);
   })
 
   constructor(update: SignalUpdater<T>, parents: Array<Signal<any>>, initial: T) {
     // Public
-    this.value = initial;
     this.parents = (parents || []);
     this.children = [];
     this.hasValue = (initial !== undefined);
 
     // Private
+    this._value = initial;
     this._isQueued = false;
     this._lastUpdater = null;
     this._update = (
@@ -83,7 +82,7 @@ export class Signal<T> {
   }
 
   toString(): string {
-    return `Signal(${this.value})`;
+    return `Signal(${this._value})`;
   }
 
   push(val: T): void {
@@ -91,7 +90,7 @@ export class Signal<T> {
   }
 
   get(): T {
-    return this.value;
+    return this._value;
   }
 
   /**
@@ -108,12 +107,12 @@ export class Signal<T> {
     const parent: Signal<T> = this;
     const child: Signal<T> =
       new Signal((self: Signal<T>, sink: ValueSink<T>) => {
-        fn(parent.value);
-      }, [ parent ], parent.value);
+        fn(parent._value);
+      }, [ parent ], parent._value);
 
     // Update immediately if it has a value
     if (child.hasValue) {
-      fn(child.value);
+      fn(child._value);
     }
 
     return child;
@@ -147,7 +146,7 @@ export class Signal<T> {
   onNext(fn: ValueSink<T>): Signal<T> {
     const parent: Signal<T> = this;
     return new Signal((self: Signal<T>, sink: ValueSink<T>) => {
-      fn(parent.value);
+      fn(parent._value);
     }, [ parent ], undefined);
   }
 
@@ -193,12 +192,12 @@ export class Signal<T> {
     const parent: Signal<T> = this;
     return new Signal((self: Signal<T>, sink: ValueSink<T>) => {
       if (msg !== undefined) {
-        log(msg, parent.value);
+        log(msg, parent._value);
       } else {
-        log(<any>parent.value);
+        log(<any>parent._value);
       }
-      sink(parent.value);
-    }, [ parent ], parent.value);
+      sink(parent._value);
+    }, [ parent ], parent._value);
   }
 
   /**
@@ -215,11 +214,11 @@ export class Signal<T> {
     return new Signal((self: Signal<T>, sink: ValueSink<T>) => {
       if (!timer) {
         timer = setTimeout(() => {
-          sink(parent.value);
+          sink(parent._value);
           timer = null;
         }, (delay || 10));
       }
-    }, [ parent ], parent.value);
+    }, [ parent ], parent._value);
   }
 
   /**
@@ -233,10 +232,10 @@ export class Signal<T> {
    */
   and(predicate: Signal<any>): Signal<T> {
     const parent: Signal<T> = this;
-    const initial = (parent.hasValue && predicate.value) ? parent.value : undefined;
+    const initial = (parent.hasValue && predicate._value) ? parent._value : undefined;
     return new Signal((self: Signal<T>, sink: ValueSink<T>) => {
-      if (predicate.value) {
-        sink(parent.value);
+      if (predicate._value) {
+        sink(parent._value);
       }
     }, [ parent ], initial);
   }
@@ -252,10 +251,10 @@ export class Signal<T> {
    */
   not(predicate: Signal<any>): Signal<T> {
     const parent: Signal<T> = this;
-    const initial = (parent.hasValue && !predicate.value) ? parent.value : undefined;
+    const initial = (parent.hasValue && !predicate._value) ? parent._value : undefined;
     return new Signal((self: Signal<T>, sink: ValueSink<T>) => {
-      if (!predicate.value) {
-        sink(parent.value);
+      if (!predicate._value) {
+        sink(parent._value);
       }
     }, [ parent ], initial);
   }
@@ -271,10 +270,10 @@ export class Signal<T> {
    */
   ap<A,B>(this: Signal<(val: A) => B>, arg: Signal<A>): Signal<B> {
     const parent: Signal<(val: A) => B> = this;
-    const initial = (parent.hasValue && arg.hasValue) ? parent.value(arg.value) : undefined;
+    const initial = (parent.hasValue && arg.hasValue) ? parent._value(arg._value) : undefined;
 
     return new Signal((self: Signal<B>, sink: ValueSink<B>) => {
-      sink(parent.value(arg.value));
+      sink(parent._value(arg._value));
     }, [ parent ], initial);
   }
 
@@ -313,7 +312,7 @@ export class Signal<T> {
     const parent: Signal<T> = this;
 
     return new Signal((self: Signal<B>, sink: ValueSink<B>) => {
-      sink(fn(self.value, parent.value));
+      sink(fn(self._value, parent._value));
     }, [ parent ], initial);
   }
 
@@ -329,8 +328,8 @@ export class Signal<T> {
     const parent: Signal<T> = this;
 
     return new Signal<B>((self: Signal<B>, sink: ValueSink<B>) => {
-      sink(tag.value);
-    }, [ parent ], tag.value);
+      sink(tag._value);
+    }, [ parent ], tag._value);
   }
 
   /**
@@ -342,7 +341,7 @@ export class Signal<T> {
    */
   merge(sig2: Signal<T>): Signal<T> {
     const sig1: Signal<T> = this;
-    return merge(sig1, sig2);
+    return Signal.merge(sig1, sig2);
   }
 
   /**
@@ -358,7 +357,7 @@ export class Signal<T> {
 
     return new Signal((self: Signal<T>, sink: ValueSink<T>) => {
       if (limit-- > 0) {
-        sink(parent.value);
+        sink(parent._value);
       } else {
         self.close();
       }
@@ -377,10 +376,10 @@ export class Signal<T> {
    */
   zip<U>(sig: Signal<U>): Signal<[T,U]> {
     const parent: Signal<T> = this;
-    const initial: [T,U] = [parent.value, sig.value];
+    const initial: [T,U] = [parent._value, sig._value];
 
     return new Signal<[T,U]>((self: Signal<[T,U]>, sink: ValueSink<[T,U]>) => {
-      sink([ parent.value, sig.value ]);
+      sink([ parent._value, sig._value ]);
     }, [ parent ], initial);
   }
 
@@ -397,7 +396,7 @@ export class Signal<T> {
    * @returns {Frampton.Signal.Signal}
    */
   filter(predicate: SignalPredicate<T>): Signal<T> {
-    const parent = this;
+    const parent: Signal<T> = this;
 
     const filterFn: SignalPredicate<T> =
       function(val: T): boolean {
@@ -409,14 +408,14 @@ export class Signal<T> {
       };
 
     const initial: T = (
-      (parent.hasValue && filterFn(parent.value)) ?
-        parent.value :
+      (parent.hasValue && filterFn(parent._value)) ?
+        parent._value :
         undefined
     );
 
     return new Signal((self: Signal<T>, sink: ValueSink<T>) => {
-      if (filterFn(parent.value)) {
-        sink(parent.value);
+      if (filterFn(parent._value)) {
+        sink(parent._value);
       }
     }, [ parent ], initial);
   }
@@ -432,11 +431,11 @@ export class Signal<T> {
    */
   filterPrevious(predicate: (prev: T, next: T) => boolean): Signal<T> {
     const parent: Signal<T> = this;
-    const initial: T = (parent.hasValue) ? parent.value : undefined;
+    const initial: T = (parent.hasValue) ? parent._value : undefined;
 
     return new Signal((self: Signal<T>, sink: ValueSink<T>) => {
-      if (predicate(self.value, parent.value)) {
-        sink(parent.value);
+      if (predicate(self._value, parent._value)) {
+        sink(parent._value);
       }
     }, [ parent ], initial);
   }
@@ -466,12 +465,12 @@ export class Signal<T> {
 
     const initial: B = (
       (parent.hasValue) ?
-        mappingFn(parent.value) :
+        mappingFn(parent._value) :
         undefined
     );
 
     return new Signal<B>((self: Signal<B>, sink: ValueSink<B>): void => {
-      sink(mappingFn(parent.value));
+      sink(mappingFn(parent._value));
     }, [ parent ], initial);
   }
 
@@ -489,7 +488,7 @@ export class Signal<T> {
         setTimeout(() => {
           sink(saved);
         }, time);
-      }(parent.value));
-    }, [ parent ], parent.value);
+      }(parent._value));
+    }, [ parent ], parent._value);
   }
 }

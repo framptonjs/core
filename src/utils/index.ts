@@ -1,5 +1,5 @@
 export { default as compose } from './compose';
-export * from './curry';
+export { curry, Curried2Result, Curried3Result, Curried4Result, Curried5Result } from './curry';
 export { default as flipArgs } from './flip-args';
 export { default as guid } from './guid';
 export { default as hasLength } from './has-length';

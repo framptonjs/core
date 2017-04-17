@@ -135,7 +135,7 @@ function updateValue<T>(sig: Signal<T>, val: T): void {
   if (isPromise(val)) {
     (<any>val).then(push(sig));
   } else {
-    sig.value = val;
+    sig._value = val;
     sig.hasValue = true;
     markChildren(sig);
     if (!updateInProgress) {
