@@ -1,8 +1,10 @@
 import { Signal } from '../../src/data';
 import { assert } from 'chai';
+import * as sinon from 'sinon';
 
 
 describe('Signal', function() {
+
   describe('create', function() {
     it('should create a signal with initial value', function() {
       const actual: number = Signal.create(2).get();
@@ -165,22 +167,58 @@ describe('Signal', function() {
   });
 
   describe('debounce', function() {
-    it('should reduce values on a signal', function(done) {
+    var clock: any = null;
+
+    before(function() {
+      clock = sinon.useFakeTimers();
+    });
+
+    after(function() {
+      clock.restore();
+    });
+
+    it('should only emit values once events have calmed for given delay', function() {
       const sig = Signal.create();
       const sig1 = sig.debounce(20);
-      const counter = sig1.fold((acc, next) => acc + 1, 0);
 
-      sig1.onValue((val) => {
-        assert.equal(val, 5);
-        assert.equal(counter.get(), 1);
-        done();
-      });
-
-      sig.push(1);
-      sig.push(2);
-      sig.push(3);
-      sig.push(4);
       sig.push(5);
+      clock.tick(19);
+      assert.equal(sig1.get(), undefined, 'fail one');
+
+      sig.push(5);
+      clock.tick(5);
+      assert.equal(sig1.get(), undefined, 'fail two');
+
+      clock.tick(9);
+      assert.equal(sig1.get(), undefined, 'fail three');
+
+      clock.tick(10);
+      assert.equal(sig1.get(), 5);
+    });
+  });
+
+  describe('throttle', function() {
+    var clock: any = null;
+
+    before(function() {
+      clock = sinon.useFakeTimers();
+    });
+
+    after(function() {
+      clock.restore();
+    });
+
+    it('should delay values on signal to at most once per delay time', function() {
+      const sig = Signal.create();
+      const sig1 = sig.throttle(20);
+
+      sig.push(5);
+
+      clock.tick(19);
+      assert.equal(sig1.get(), undefined);
+
+      clock.tick(1);
+      assert.equal(sig1.get(), 5);
     });
   });
 

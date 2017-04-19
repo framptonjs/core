@@ -208,6 +208,30 @@ export class Signal<T> {
     const parent: Signal<T> = this;
     var timer: number = null;
     return new Signal((self: Signal<T>, sink: ValueSink<T>) => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+
+      timer = setTimeout(() => {
+        sink(parent._value);
+        timer = null;
+      }, (delay || 10));
+    }, [ parent ], parent._value);
+  }
+
+  /**
+   * @name throttle
+   * @method
+   * @private
+   * @memberof Frampton.Signal.Signal#
+   * @param {Number} delay - Milliseconds to throttle the signal
+   * @returns {Frampton.Signal.Signal}
+   */
+  throttle(delay: number): Signal<T> {
+    const parent: Signal<T> = this;
+    var timer: number = null;
+    return new Signal((self: Signal<T>, sink: ValueSink<T>) => {
       if (!timer) {
         timer = setTimeout(() => {
           sink(parent._value);
