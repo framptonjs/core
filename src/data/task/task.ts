@@ -369,7 +369,7 @@ export class Task<E,V,P> {
    * @param {Function} mapping
    * @returns {Frampton.Data.Task}
    */
-  recover(mapping: TaskMapping<E,V>): Task<E,V,P> {
+  recover(mapping: TaskMapping<E,V>): Task<never,V,P> {
     const source = this;
     const mappingFn: (val: E) => V =
       (typeof mapping === 'function') ?
@@ -398,7 +398,7 @@ export class Task<E,V,P> {
    * @param {*} val - A value to map errors to
    * @returns {Frampton.Data.Task}
    */
-  default(val: V): Task<E,V,P> {
+  default(val: V): Task<never,V,P> {
     return this.recover(() => val);
   }
 
@@ -413,7 +413,7 @@ export class Task<E,V,P> {
    * @param {Function} mapping
    * @returns {Frampton.Data.Task}
    */
-  progress(mapping: TaskMapping<P,V>): Task<E,V,P> {
+  progress(mapping: TaskMapping<P,V>): Task<E,V,never> {
     const source = this;
     const mappingFn: (val: P) => V =
       (typeof mapping === 'function') ?
