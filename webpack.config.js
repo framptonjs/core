@@ -10,7 +10,7 @@ module.exports = {
     filename: '[name].js',
     path: resolve('dist/bundles'),
     library: '@frampton/core',
-    libraryTarget: 'commonjs'
+    libraryTarget: 'commonjs2'
   },
 
   resolve: {
