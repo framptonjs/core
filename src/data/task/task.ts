@@ -154,9 +154,29 @@ export class Task<E,V,P> {
    * @param {Frampton.Data.Task[]} tasks - The Tasks to wait for
    * @returns {Frampton.Data.Task}
    */
-  static sequence<E,V,P>(...tasks: Task<any, any, any>[]): Task<E,V,P> {
+  static sequence<E,V,P>(...tasks: Array<Task<any, any, any>>): Task<E,V,P> {
     return tasks.reduce((acc: any, next: any): any => {
       return acc.concat(next);
+    });
+  }
+
+  /**
+   * batch :: [Task x a] -> Task x a
+   *
+   * Run a group of tasks that all use the same sinks
+   *
+   * @name batch
+   * @method
+   * @memberof Frampton.Data.Task
+   * @param {Frampton.Data.Task[]} tasks - The Tasks to wait for
+   * @returns {Frampton.Data.Task}
+   */
+  static batch<E,V,P>(...tasks: Array<Task<E,V,P>>): Task<E,V,P> {
+    return Task.create((sinks) => {
+      const len = tasks.length;
+      for (let i = 0; i < len; i++) {
+        tasks[i].run(sinks);
+      }
     });
   }
 

@@ -349,6 +349,108 @@ describe('Task', function() {
     });
   });
 
+  describe('batch', function() {
+    it('should create a task that runs a list of tasks in sequence', function(done) {
+      var counter = 0;
+      const task = Task.batch(
+        Task.create((sinks) => {
+          setTimeout(() => {
+            sinks.resolve(1);
+          }, 200);
+        }),
+        Task.create((sinks) => {
+          setTimeout(() => {
+            sinks.resolve(2);
+          }, 50);
+        }),
+        Task.create((sinks) => {
+          setTimeout(() => {
+            sinks.resolve(3);
+          }, 100);
+        })
+      );
+
+      task.run({
+        reject(err: never): void {
+          assert.ok(false, 'reject called');
+          done();
+        },
+        resolve(val: number): void {
+          counter += 1;
+          switch (counter) {
+            case 1:
+              assert.equal(2, val);
+              break;
+
+            case 2:
+              assert.equal(3, val);
+              break;
+
+            case 3:
+              assert.equal(1, val);
+              done();
+              break;
+
+            default:
+              assert.ok(false, 'default called');
+              done();
+          }
+        }
+      });
+    });
+
+    it('should create a task that maps all child tasks', function(done) {
+      var counter = 0;
+      const task = Task.batch(
+        Task.create((sinks) => {
+          setTimeout(() => {
+            sinks.resolve(1);
+          }, 200);
+        }),
+        Task.create((sinks) => {
+          setTimeout(() => {
+            sinks.resolve(2);
+          }, 50);
+        }),
+        Task.create((sinks) => {
+          setTimeout(() => {
+            sinks.resolve(3);
+          }, 100);
+        })
+      );
+
+      task
+        .map((next: number) => next + 2)
+        .run({
+          reject(err: never): void {
+            assert.ok(false, 'reject called');
+            done();
+          },
+          resolve(val: number): void {
+            counter += 1;
+            switch (counter) {
+              case 1:
+                assert.equal(4, val);
+                break;
+
+              case 2:
+                assert.equal(5, val);
+                break;
+
+              case 3:
+                assert.equal(3, val);
+                done();
+                break;
+
+              default:
+                assert.ok(false, 'default called');
+                done();
+            }
+          }
+        });
+    });
+  });
+
   describe('sequence', function() {
     it('should create a task that runs a list of tasks in sequence', function(done) {
       var counter = 0;
