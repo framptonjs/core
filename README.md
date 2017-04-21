@@ -129,7 +129,7 @@ const counter: Signal<number> =
 A Result is used to represent values that can be the result of successful or failed computations. It is analogous to Either in some functional programming languages. Result has two subclasses, Success and Failure.
 
 ```
-import { Result } from '@frampton/core';
+import { Result, Success, Failure } from '@frampton/core';
 
 
 const success: Success<number> =
@@ -282,7 +282,7 @@ const waitTwoSeconds: Task<Error,string,never> =
   });
 
 
-// This just describes the task. To run it...
+// The above just describes the task. To run it...
 waitTwoSeconds.run({
   resolve(msg: string): void {
     console.log(msg);

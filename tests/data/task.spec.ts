@@ -1,6 +1,6 @@
 import { Task, Signal } from '../../src/data';
-import { noop } from '../../src/utils';
 import { assert } from 'chai';
+import * as sinon from 'sinon';
 
 
 describe('Task', function() {
@@ -13,12 +13,13 @@ describe('Task', function() {
       });
 
       task.run({
-        reject: noop,
-        resolve(val) {
+        reject(err: never): void {
+          assert.ok(false, 'reject called');
+        },
+        resolve(val: number): void {
           assert.equal(test, 5);
           done();
-        },
-        progress: noop
+        }
       });
 
       // Test should still be 0.
@@ -35,12 +36,13 @@ describe('Task', function() {
       });
 
       task.run({
-        reject: noop,
-        resolve(val) {
+        reject(err: never): void {
+          assert.ok(false, 'reject called');
+        },
+        resolve(val: number): void {
           assert.equal(test, 5);
           done();
-        },
-        progress: noop
+        }
       });
 
       assert.equal(test, 5);
@@ -56,12 +58,13 @@ describe('Task', function() {
       });
 
       task.join().run({
-        reject : noop,
-        resolve : (val) => {
+        reject(err: never): void {
+          assert.ok(false, 'reject called');
+        },
+        resolve(val: number): void {
           assert.equal(val, 5, 'correctly flattened Task');
           done();
-        },
-        progress : noop
+        }
       });
     });
   });
@@ -87,12 +90,13 @@ describe('Task', function() {
       };
 
       task.chain(mapping1).chain(mapping2).run({
-        reject: noop,
-        resolve(val: number) {
+        reject(err: never): void {
+          assert.ok(false, 'reject called');
+        },
+        resolve(val: number): void {
           assert.equal(val, 8, 'incorrect final result');
           done();
-        },
-        progress: noop
+        }
       });
     });
   });
@@ -108,12 +112,13 @@ describe('Task', function() {
       };
 
       task.map(mapping).run({
-        reject: noop,
-        resolve(val: string) {
+        reject(err: never): void {
+          assert.ok(false, 'reject called');
+        },
+        resolve(val: string): void {
           assert.equal(val, 'butcher');
           done();
-        },
-        progress: noop
+        }
       });
     });
   });
@@ -137,8 +142,7 @@ describe('Task', function() {
         resolve(val: number): void {
           assert.ok(false, 'incorrectly resolved');
           done();
-        },
-        progress: noop
+        }
       });
     });
   });
@@ -162,17 +166,17 @@ describe('Task', function() {
         resolve(val: number): void {
           assert.equal(val, 5);
           done();
-        },
-        progress: noop
+        }
       });
     });
   });
 
   describe('recover', function() {
     it('should map a reject into a resolve', function(done) {
-      const task = Task.create((sinks) => {
-        sinks.reject(5);
-      });
+      const task =
+        Task.create((sinks) => {
+          sinks.reject(5);
+        });
 
       const mapping =
         (val: number): string => {
@@ -180,12 +184,13 @@ describe('Task', function() {
         };
 
       task.recover(mapping).run({
-        reject: noop,
+        reject(err: never): void {
+          assert.ok(false, 'reject called');
+        },
         resolve(val: string): void {
           assert.equal(val, 'butcher');
           done();
-        },
-        progress: noop
+        }
       });
     });
   });
@@ -193,21 +198,22 @@ describe('Task', function() {
   describe('progress', function() {
     it('should map a progress into a resolve', function(done) {
       var count = 0;
-      const task = Task.create((sinks) => {
-        function updateProgress() {
-          if (count < 2) {
-            sinks.progress(count);
-            setTimeout(updateProgress, 10);
+      const task =
+        Task.create((sinks) => {
+          function updateProgress() {
+            if (count < 2) {
+              sinks.progress(count);
+              setTimeout(updateProgress, 10);
 
-          } else {
-            sinks.resolve(10);
+            } else {
+              sinks.resolve(10);
+            }
+
+            count += 1;
           }
 
-          count += 1;
-        }
-
-        updateProgress();
-      });
+          updateProgress();
+        });
 
       const mapping =
         (val: number): number => val + 2;
@@ -257,19 +263,29 @@ describe('Task', function() {
   });
 
   describe('delay', function() {
-    it('should create a Task that emits delayed value after time', function(done) {
+    var clock: any = null;
+
+    before(function() {
+      clock = sinon.useFakeTimers();
+    });
+
+    after(function() {
+      clock.restore();
+    });
+
+    it('should create a Task that emits delayed value after time', function() {
       const task = Task.delay(1000, 'test value');
 
       task.run({
-        reject: (err) => {
+        reject(err: never): void {
           assert.ok(false);
-          done();
         },
-        resolve: (val) => {
+        resolve(val: string): void {
           assert.equal(val, 'test value');
-          done();
         }
       });
+
+      clock.tick(1001);
     });
   });
 
@@ -278,11 +294,11 @@ describe('Task', function() {
       const task = Task.succeed('test value');
 
       task.run({
-        reject : (err) => {
+        reject(err: never): void {
           assert.ok(false, 'reject called');
           done();
         },
-        resolve : (val) => {
+        resolve(val: string): void {
           assert.equal(val, 'test value');
           done();
         }
@@ -295,11 +311,11 @@ describe('Task', function() {
       const task = Task.fail('test error');
 
       task.run({
-        reject : (err) => {
+        reject(err: string): void {
           assert.equal(err, 'test error');
           done();
         },
-        resolve : (val) => {
+        resolve(val: never): void {
           assert.ok(false, 'resolve called');
           done();
         }
@@ -312,15 +328,15 @@ describe('Task', function() {
       const task = Task.never();
 
       task.run({
-        reject : (err) => {
+        reject(err: never): void {
           assert.ok(false);
           done();
         },
-        resolve : (val) => {
+        resolve(val: never): void {
           assert.ok(false);
           done();
         },
-        progress : (val) => {
+        progress(val: never): void {
           assert.ok(false);
           done();
         }
@@ -335,23 +351,36 @@ describe('Task', function() {
 
   describe('sequence', function() {
     it('should create a task that runs a list of tasks in sequence', function(done) {
-      var test: number = 0;
-      const task = Task.create((sinks) => {
-        test = 5;
-        sinks.resolve(null);
-      });
+      var counter = 0;
+      const task = Task.sequence(
+        Task.create((sinks) => {
+          assert.equal(counter, 0);
+          counter += 1;
+          sinks.resolve(1);
+        }),
+        Task.create((sinks) => {
+          assert.equal(counter, 1);
+          counter += 1;
+          sinks.resolve(2);
+        }),
+        Task.create((sinks) => {
+          assert.equal(counter, 2);
+          counter += 1;
+          sinks.resolve(3);
+        })
+      );
 
       task.run({
-        reject: noop,
-        resolve(val) {
-          assert.equal(test, 5);
+        reject(err: never): void {
+          assert.ok(false);
           done();
         },
-        progress: noop
+        resolve(val: number): void {
+          assert.equal(counter, 3);
+          assert.equal(val, 3);
+          done();
+        }
       });
-
-      // Test should still be 0.
-      assert.equal(test, 0);
     });
   });
 
@@ -384,11 +413,11 @@ describe('Task', function() {
       );
 
       task.run({
-        reject(err) {
+        reject(err: never): void {
           assert.ok(false, 'reject called');
           done();
         },
-        resolve(val) {
+        resolve(val: Array<number>): void {
           assert.equal(counter, 3);
           assert.deepEqual(val, [1,2,3]);
           done();

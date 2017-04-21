@@ -13,12 +13,13 @@ import {
   warn
 } from '../../logging';
 import { Signal } from '../signal';
+import { ValueSink, ValueMapping, ValuePredicate } from '../types';
 
 
 export interface TaskSinks<E,V,P> {
-  reject(err?: E): void;
-  resolve(val?: V): void;
-  progress?: (prg?: P) => void;
+  reject: ValueSink<E>;
+  resolve: ValueSink<V>;
+  progress?: ValueSink<P>;
 }
 
 
@@ -27,14 +28,8 @@ export interface TaskComputation<E,V,P> {
 }
 
 
-export type TaskMapping<A,B> =
-  ((val: A) => B) |
-  B;
-
-
-export type TaskPredicate<T> =
-  ((val: T) => boolean) |
-  T;
+export type Effect<T> =
+  Task<never,T,never>;
 
 
 /**
@@ -85,17 +80,14 @@ export class Task<E,V,P> {
    * @param {Frampton.Signals.Signal} tasks - Signal of Tasks to execute
    * @param {Function} onValue - A function to pass the resolve values to
    */
-  static execute<T>(tasks: Signal<Task<any,T,any>>, onValue: (val: T) => void): void {
-    tasks.onValue((task: Task<any,T,any>): void => {
-      task.run({
-        reject(err: any): void {
+  static execute<T>(effects: Signal<Effect<T>>, onValue: (val: T) => void): void {
+    effects.onValue((effect: Effect<T>): void => {
+      effect.run({
+        reject(err: never): void {
           warn('Error running task: ', err);
         },
         resolve(val: T): void {
           onValue(val);
-        },
-        progress(val: any): void {
-          log('Task progress: ', val);
         }
       });
     });
@@ -369,7 +361,7 @@ export class Task<E,V,P> {
    * @param {Function} mapping
    * @returns {Frampton.Data.Task}
    */
-  recover(mapping: TaskMapping<E,V>): Task<never,V,P> {
+  recover(mapping: ValueMapping<E,V>): Task<never,V,P> {
     const source = this;
     const mappingFn: (val: E) => V =
       (typeof mapping === 'function') ?
@@ -413,7 +405,7 @@ export class Task<E,V,P> {
    * @param {Function} mapping
    * @returns {Frampton.Data.Task}
    */
-  progress(mapping: TaskMapping<P,V>): Task<E,V,never> {
+  progress(mapping: ValueMapping<P,V>): Task<E,V,never> {
     const source = this;
     const mappingFn: (val: P) => V =
       (typeof mapping === 'function') ?
@@ -440,7 +432,7 @@ export class Task<E,V,P> {
    * @param {Function} mapping
    * @returns {Frampton.Data.Task}
    */
-  map<B>(mapping: TaskMapping<V,B>): Task<E,B,P> {
+  map<B>(mapping: ValueMapping<V,B>): Task<E,B,P> {
     const source = this;
     const mappingFn: (val: V) => B =
       (typeof mapping === 'function') ?
@@ -469,7 +461,7 @@ export class Task<E,V,P> {
    * @param {Function} mapping - The function to map the resolve value.
    * @returns {Frampton.Data.Task}
    */
-  success<B>(mapping: TaskMapping<V,B>) {
+  success<B>(mapping: ValueMapping<V,B>) {
     return this.map(mapping);
   }
 
@@ -482,7 +474,7 @@ export class Task<E,V,P> {
    * @param {Function} predicate - The function to filter the resolve value.
    * @returns {Frampton.Data.Task}
    */
-  filter(predicate: TaskPredicate<V>): Task<E,V,P> {
+  filter(predicate: ValuePredicate<V>): Task<E,V,P> {
     const source = this;
     const filterFn: (val: V) => boolean =
       (typeof predicate === 'function') ?
@@ -516,7 +508,7 @@ export class Task<E,V,P> {
    * @param {Function} predicate - The function to validate the resolve value.
    * @returns {Frampton.Data.Task}
    */
-  validate(predicate: TaskPredicate<V>): Task<E,V,P> {
+  validate(predicate: ValuePredicate<V>): Task<E,V,P> {
     return this.filter(predicate);
   }
 }

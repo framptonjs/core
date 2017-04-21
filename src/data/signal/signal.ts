@@ -1,32 +1,15 @@
 import { log } from '../../logging';
 import { push } from './runtime';
 import { curry, Curried2Result } from '../../utils';
+import { ValueSink, ValueMapping, ValuePredicate, ValueReducer } from '../types';
 
 
 export function emptyUpdate<T>(sig: Signal<T>): void {}
 
 
-export type ValueSink<T> =
-  (val: T) => void;
-
-
 export interface SignalUpdater<T> {
   (sig: Signal<T>, sink: ValueSink<T>): void;
 }
-
-
-export type SignalMapping<A,B> =
-  ((val: A) => B) |
-  B;
-
-
-export type SignalPredicate<T> =
-  ((val: T) => boolean) |
-  T;
-
-
-export type SignalReducer<A,B> =
-  (acc: B, next: A) => B;
 
 
 export class Signal<T> {
@@ -328,7 +311,7 @@ export class Signal<T> {
    * @param {Function} initial
    * @returns {Frampton.Signal.Signal}
    */
-  fold<B>(fn: SignalReducer<T,B>, initial: B): Signal<B> {
+  fold<B>(fn: ValueReducer<T,B>, initial: B): Signal<B> {
     const parent: Signal<T> = this;
 
     return new Signal((self: Signal<B>, sink: ValueSink<B>) => {
@@ -415,10 +398,10 @@ export class Signal<T> {
    * @param {*} predicate - Usually a function to test values of the Signal
    * @returns {Frampton.Signal.Signal}
    */
-  filter(predicate: SignalPredicate<T>): Signal<T> {
+  filter(predicate: ValuePredicate<T>): Signal<T> {
     const parent: Signal<T> = this;
 
-    const filterFn: SignalPredicate<T> =
+    const filterFn: ValuePredicate<T> =
       function(val: T): boolean {
         if (typeof predicate === 'function') {
           return predicate(val);
@@ -471,10 +454,10 @@ export class Signal<T> {
    *                        the parent signal will be replaced with the value.
    * @returns {Frampton.Signal.Signal} A new signal with mapped values
    */
-  map<B>(mapping: SignalMapping<T,B>): Signal<B> {
+  map<B>(mapping: ValueMapping<T,B>): Signal<B> {
     const parent: Signal<T> = this;
 
-    const mappingFn: SignalMapping<T,B> =
+    const mappingFn: ValueMapping<T,B> =
       function(val: T): B {
         if (typeof mapping === 'function') {
           return mapping(val);
