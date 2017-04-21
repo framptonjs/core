@@ -21,7 +21,6 @@ export class Maybe<T> {
     return new Nothing<T>();
   }
 
-
   static just<T>(val: T): Just<T> {
     return new Just<T>(val);
   }

@@ -1,3 +1,4 @@
+export { default as cached } from './cached';
 export { default as compose } from './compose';
 export { curry, Curried2Result, Curried3Result, Curried4Result, Curried5Result } from './curry';
 export { default as flipArgs } from './flip-args';
@@ -29,3 +30,4 @@ export { default as noop } from './noop';
 export { default as not } from './not';
 export { default as ofValue } from './of-value';
 export { default as once } from './once';
+export * from './simple-cache';

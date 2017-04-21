@@ -24,6 +24,7 @@ import './object/values.spec';
 import './string/capitalize.spec';
 
 // UTILS
+import './utils/cached.spec';
 import './utils/compose.spec';
 import './utils/curry.spec';
 import './utils/flip-args.spec';
@@ -31,3 +32,4 @@ import './utils/has-length.spec';
 import './utils/is-empty.spec';
 import './utils/of-value.spec';
 import './utils/once.spec';
+import './utils/simple-cache.spec';
