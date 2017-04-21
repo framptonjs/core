@@ -2,10 +2,10 @@
   "name": "@frampton/core",
   "version": "0.0.3",
   "description": "",
-  "main": "./dist/index.js",
+  "main": "./dist/bundles/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
-    "build": "rm -rf ./dist/; tsc -p ./tsconfig.json;",
+    "build": "rm -rf ./dist/; tsc -p ./tsconfig.json; webpack --config webpack.config.js;",
     "build:test": "rm -rf ./testing/; tsc -p ./tsconfig.test.json;",
     "test": "npm run build:test; mocha --globals window,global ./testing/tests/index.js;"
   },
