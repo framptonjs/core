@@ -10,5 +10,5 @@ export * from './src/string';
 export * from './src/math';
 export const Logging = FramptonLogging;
 export const List = FramptonList;
-export const Object = FramptonObject;
+export const Obj = FramptonObject;
 export const Env = FramptonEnv;

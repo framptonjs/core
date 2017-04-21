@@ -22,6 +22,7 @@ import './object/values.spec';
 
 // STRING
 import './string/capitalize.spec';
+import './string/dash-to-camel.spec';
 
 // UTILS
 import './utils/cached.spec';

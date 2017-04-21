@@ -2,7 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "ES6",
+    "target": "ES5",
     "rootDir": ".",
     "outDir": "./dist",
     "noImplicitAny": true,
