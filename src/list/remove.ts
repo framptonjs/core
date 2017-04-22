@@ -12,7 +12,7 @@ import { curry, Curried2Result } from '../utils';
  */
 export default curry(function curried_remove<T>(obj: T, xs: Array<T>): Array<T> {
   const ys: Array<T> = [];
-  const len = xs.length;
+  const len: number = xs.length;
 
   for (let i = 0; i < len; i++) {
     const item = xs[i];

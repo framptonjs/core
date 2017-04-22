@@ -6,19 +6,21 @@ import getKeys from './keys';
 function setValue(prop: string, value: any, oldObj: any, newObj: any) {
   if (!isString(prop)) {
     throw new Error('Property to set must be a string');
+
   } else {
     const [ head, ...tail ] = (prop || '').split('.').filter((val) => {
       return val.trim() !== '';
     });
 
-    const keys = getKeys(oldObj);
+    const keys: Array<string> = getKeys(oldObj);
 
     if (keys.indexOf(head) === -1) {
       keys.push(head);
     }
 
     for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
+      const key: string = keys[i];
+
       if (key === head) {
         if (tail.length > 0) {
           const nextObj = oldObj[key] || {};
@@ -26,6 +28,7 @@ function setValue(prop: string, value: any, oldObj: any, newObj: any) {
         } else {
           newObj[key] = value;
         }
+
       } else {
         newObj[key] = oldObj[key];
       }

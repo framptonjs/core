@@ -10,8 +10,8 @@ import length from './length';
  * @returns {Array} A new array
  */
 export default curry(function filter<A,B>(mapping: (val: A) => B, xs: Array<A>): Array<B> {
-  const len = length(xs);
-  const newList = [];
+  const len: number = length(xs);
+  const newList: Array<B> = [];
 
   for (let i = 0; i < len; i++) {
     newList.push(mapping(xs[i]));

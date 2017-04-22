@@ -1,6 +1,6 @@
 # Frampton-Core
 
-Frampton is a library to assist writing JavaScript in a functional manner. Frampton supplies an observable implementation (Frampton.Data.Signal). Frampton also provides a number of utilities for dealing with common JavaScript types in a more functional manner (Frampton.List, Frampton.Object).
+Frampton is a library to assist writing JavaScript in a functional manner. Frampton supplies an observable implementation (Frampton.Data.Signal). Frampton also provides a number of utilities for dealing with common JavaScript types in a more functional manner (Frampton.List, Frampton.Obj).
 
 Frampton is written in Typescript and I believe functional programming is a nicer experience when strongly typed.
 

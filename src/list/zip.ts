@@ -11,10 +11,10 @@ import { curry, Curried2Result } from '../utils';
  * @param {Array} ys
  */
 export default curry(function zip_array<A,B>(xs: Array<A>, ys: Array<B>): Array<[A,B]> {
-  const xLen = xs.length;
-  const yLen = ys.length;
-  const len = ((xLen > yLen) ? yLen : xLen);
-  const zs = [];
+  const xLen: number = xs.length;
+  const yLen: number = ys.length;
+  const len: number = ((xLen > yLen) ? yLen : xLen);
+  const zs: Array<[A,B]> = [];
 
   for (let i = 0; i < len; i++) {
     const ts: [A,B] = [xs[i], ys[i]];

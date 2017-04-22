@@ -25,6 +25,7 @@ export default <Curried2Result<string, any, any>>curry(function get<T>(prop: str
     if (parts.length > 1) {
       const [ head, ...tail ] = parts;
       const sub: any = obj[head];
+
       return (
         !isPrimitive(sub) ?
           get<T>(tail.join('.'), sub) :

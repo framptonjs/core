@@ -8,7 +8,6 @@ import contains from './contains';
  * @returns {Array}
  */
 export default curry(<T>(xs: Array<T>, ys: Array<T>): Array<T> => {
-
   const diff: Array<T> = [];
   const len: number = xs.length;
 

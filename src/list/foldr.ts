@@ -7,7 +7,7 @@ import length from './length';
  * @memberof Frampton.List
  */
 export default curry(function foldr<A,B>(fn: (acc: B, next: A) => B, acc: B, xs: Array<A>): B {
-  var len = length(xs);
+  var len: number = length(xs);
 
   while (len--) {
     acc = fn(acc, xs[len]);
