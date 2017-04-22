@@ -1,7 +1,13 @@
+export interface CurriedResult<A,B> {
+  (a: A): B;
+}
+
+
 export interface Curried2Result<A,B,C> {
   (a: A, b: B): C;
-  (a: A): (b: B) => C;
+  (a: A): CurriedResult<B,C>;
 }
+
 
 export interface Curried3Result<A,B,C,D> {
   (a: A, b: B, c: C): D;
@@ -9,12 +15,14 @@ export interface Curried3Result<A,B,C,D> {
   (a: A): Curried2Result<B,C,D>;
 }
 
+
 export interface Curried4Result<A,B,C,D,E> {
   (a: A, b: B, c: C, d: D): E;
   (a: A, b: B, c: C): (d: D) => E;
   (a: A, b: B): Curried2Result<C,D,E>;
   (a: A): Curried3Result<B,C,D,E>;
 }
+
 
 export interface Curried5Result<A,B,C,D,E,F> {
   (a: A, b: B, c: C, d: D, e: E): F;

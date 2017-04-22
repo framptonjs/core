@@ -1,3 +1,6 @@
+// APP
+import './app.spec';
+
 // DATA
 import './data/maybe.spec';
 import './data/result.spec';

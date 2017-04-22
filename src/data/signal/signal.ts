@@ -55,8 +55,8 @@ export class Signal<T> {
     this._lastUpdater = null;
     this._update = update;
 
-    for (let i = 0; i < parents.length; i++) {
-      parents[i].children.push(this);
+    for (let i = 0; i < this.parents.length; i++) {
+      this.parents[i].children.push(this);
     }
   }
 
