@@ -12,7 +12,7 @@
   "author": "Kevin Greene <hightimesteddy@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/framptonjs/frampton-core.git"
+    "url": "https://github.com/framptonjs/core.git"
   },
   "files": [
     "dist/"
