@@ -10,8 +10,19 @@
     "test": "npm run build:test; mocha --globals window,global ./testing/tests/index.js;"
   },
   "author": "Kevin Greene <hightimesteddy@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/framptonjs/frampton-core.git"
+  },
   "files": [
     "dist/"
+  ],
+  "keywords": [
+    "monads",
+    "algebraic",
+    "event stream",
+    "functional",
+    "functional reactive"
   ],
   "license": "MIT",
   "devDependencies": {

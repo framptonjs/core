@@ -6,8 +6,7 @@
     "rootDir": ".",
     "outDir": "./dist",
     "noImplicitAny": true,
-    "declaration": true,
-    "moduleResolution": "Node"
+    "declaration": true
   },
   "files": [
     "./index.ts"
