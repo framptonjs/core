@@ -263,7 +263,9 @@ Creates a new Result by mapping Success values, Failures are ignored.
 
 ```
 // map successful values
-const mapping = (val: number): number => val + 5;
+const mapping =
+  (val: number): number => val + 5;
+
 const mappedSuccess: Success<number> =
   success.map(mapping); // -> 'Success(10)'
 
@@ -276,8 +278,9 @@ const mappedFailure: Failure<number> =
 Creates a new Result by mapping Failure values, Successes are ignored.
 
 ```
-// map failed values
-const mapping = (val: number): number => val + 3;
+const mapping =
+  (val: number): number => val + 3;
+
 const mappedSuccess: Success<number> =
   success.mapFailure(mapping); // -> 'Success(5)'
 
@@ -290,7 +293,9 @@ const mappedFailure: Failure<number> =
 Creates a new Result by filtering Successes. Successes become Failures if they fail predicate. Failures are ignored.
 
 ```
-const predicate = (val) => val > 10;
+const predicate =
+  (val: number): number => val > 10;
+
 const filteredSuccess: Result<number,number> =
   success.filter(predicate); // -> 'Failure(5)'
 
@@ -414,8 +419,11 @@ Returns the current value of a Maybe, throws an error if Nothing.
 
 ```
 // get the value from a Maybe
-const one = maybeOne.get(); // -> 1
-const nothing = maybeNothing.get(); // -> Error: can't get value of Nothing
+const one: number =
+  maybeOne.get(); // -> 1
+
+const nothing: number =
+  maybeNothing.get(); // -> Error: can't get value of Nothing
 ```
 
 #### getOrElse
@@ -503,6 +511,51 @@ const delayedFunc: Task<Error,string,never> =
   waitTwoSeconds.map((msg: string): string => {
     return msg.toUpperCase();
   });
+```
+
+#### concat
+
+Creates a new Task that runs two Tasks in sequence. The results of the first Task are disgaurded.
+
+```
+const waitFourSeconds: Task<Error,string,never> =
+  waitTwoSeconds.concat(waitTwoSeconds);
+```
+
+#### chain
+
+Creates a new Task that chains two Tasks together. The chain method takes a function that takes the successful value of the previous Task and returns a new Task.
+
+```
+const getResults =
+  (query: string): Task<Error,Array<string>,never> =>
+    Task.create((sinks) => {
+      $.get(`/search/${query}`).then((res) => {
+        sinks.resolve(res);
+      }, (err) => {
+        sinks.reject(err);
+      });
+    });
+
+const displayResults
+  (results: Array<string>): Task<Error,void,never> =>
+    Task.create((sinks) => {
+      const listItems: string =
+        results.reduce((acc, next) => {
+          return acc + `<li>${next}</li>`;
+        }, '');
+
+      const container: Element =
+        document.getElementById('result-container');
+
+      container.innerHTML = listItems;
+
+      sinks.resolve(null);
+    });
+
+const getAndDisplay =
+  (query: string): Task<Error,void,never> =>
+    getResults(query).chain(displayResults);
 ```
 
 #### recover
