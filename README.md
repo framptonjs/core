@@ -174,7 +174,7 @@ const merged: Signal<number> =
 
 #### zip
 
-Creates a new Signal by combining the values of two Signals into a tuple.
+Returns a new Signal by combining the values of two Signals into a tuple.
 
 ```
 const tupleSignal: Signal<[number,number]> =
@@ -191,6 +191,16 @@ const counter: Signal<number> =
   sig2.fold((acc: number, next: number): number => {
     return acc + 1;
   }, 0);
+```
+
+#### debounce
+
+Returns a new Signal that limits the number of times the value can be updated per given milliseconds.
+
+```
+// This counts how many times sig2 is called
+const rateLimited: Signal<number> =
+  sig2.debounce(1000);
 ```
 
 

@@ -1,4 +1,3 @@
-import { first, second } from './list';
 import { Effect, Task, Signal } from './data';
 
 

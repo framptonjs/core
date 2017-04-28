@@ -98,7 +98,7 @@ export class Signal<T> {
   }
 
   /**
-   * Works just like the value method, just repeated values are dropped.
+   * Works just like the onValue method, just repeated values are dropped.
    *
    * @name onChange
    * @method
@@ -265,6 +265,10 @@ export class Signal<T> {
   /**
    * ap(<*>) :: Signal (a -> b) -> Signal a -> Signal b
    *
+   * Given that we are working with a Signal of functions apply the
+   * function on the parent Signal to the value on the arg Signal to
+   * get the value for the new Signal.
+   *
    * @name ap
    * @method
    * @memberof Frampton.Signal.Signal#
@@ -320,6 +324,8 @@ export class Signal<T> {
   }
 
   /**
+   * When the parent Signal updates sample the value of the tag Signal to retrieve the value for the new Signal.
+   *
    * @name sample
    * @method
    * @private
@@ -336,6 +342,8 @@ export class Signal<T> {
   }
 
   /**
+   * Make a new Signal combining the values of these two Signals.
+   *
    * @name merge
    * @method
    * @memberof Frampton.Signal.Signal#
@@ -348,6 +356,8 @@ export class Signal<T> {
   }
 
   /**
+   * Take the given number of values off of this Signal and then close Signal.
+   *
    * @name take
    * @method
    * @private

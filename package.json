@@ -1,6 +1,6 @@
 {
   "name": "@frampton/core",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "",
   "main": "./dist/bundles/core.js",
   "typings": "./dist/index.d.ts",

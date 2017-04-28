@@ -1,17 +1,6 @@
 import { curry } from '../../utils';
 
 
-// export interface ResultClient<V,E> {
-//   toString(): string;
-//   map<B>(mapping: (value: V) => B): ResultClient<B,E>;
-//   mapFailure<B>(mapping: (err: E) => B): ResultClient<V,B>;
-//   filter(predicate: (value: V) => boolean): ResultClient<V,E>;
-//   fork<A,B>(success: (value: V) => A, failure: (err: E) => B): A | B;
-//   isFailure(): boolean;
-//   isSuccess(): boolean;
-// }
-
-
 export class Result<V,E> {
   protected _value: V;
 
@@ -74,6 +63,10 @@ export class Result<V,E> {
 export class Success<T> extends Result<T,never> {
   _value: T;
 
+  static create<T>(val: T): Success<T> {
+    return new Success(val);
+  }
+
   constructor(val: T) {
     super();
     this._value = val;
@@ -83,6 +76,10 @@ export class Success<T> extends Result<T,never> {
 
 export class Failure<T> extends Result<any,T> {
   _value: T;
+
+  static create<T>(val: T): Failure<T> {
+    return new Failure(val);
+  }
 
   constructor(val: T) {
     super();

@@ -5,7 +5,14 @@ const env: any =
     (window !== undefined) ? window :
       {};
 
-env.__Frampton = {};
+
+export type EnvMode =
+  'test' | 'dev' | 'prod';
+
+
+if (typeof env.__Frampton === 'undefined') {
+  env.__Frampton = {};
+}
 
 env.__Frampton.TEST = 'test';
 
@@ -26,12 +33,22 @@ if (typeof env.__Frampton.ENV.MOCK === 'undefined') {
 }
 
 export default {
+  TEST: 'test',
+
+  DEV: 'dev',
+
+  PROD: 'prod',
+
   mock(key: string): any {
     return (
       (env.__Frampton.ENV.MOCK && env.__Frampton.ENV.MOCK[key]) ?
         env.__Frampton.ENV.MOCK[key] :
         null
     );
+  },
+
+  setMode(mode: EnvMode): void {
+    env.__Frampton.ENV.MODE = mode;
   },
 
   isDev(): boolean {
