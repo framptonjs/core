@@ -2,11 +2,12 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "ES5",
+    "target": "es2015",
     "rootDir": ".",
     "outDir": "./dist",
     "noImplicitAny": true,
-    "declaration": true
+    "declaration": true,
+    "moduleResolution": "Node"
   },
   "files": [
     "./index.ts"

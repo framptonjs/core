@@ -2,7 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "ES5",
+    "target": "es2015",
     "module": "commonjs",
     "rootDir": ".",
     "outDir": "./testing",

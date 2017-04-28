@@ -34,6 +34,7 @@ import './utils/curry.spec';
 import './utils/flip-args.spec';
 import './utils/has-length.spec';
 import './utils/is-empty.spec';
+import './utils/is-promise.spec';
 import './utils/of-value.spec';
 import './utils/once.spec';
 import './utils/simple-cache.spec';
