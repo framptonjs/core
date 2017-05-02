@@ -25,5 +25,8 @@ module.exports = {
 
   resolve: {
     extensions: [ '.js' ]
-  }
+  },
+
+  // Source maps support ("inline-source-map" also works)
+  devtool: "source-map"
 };
