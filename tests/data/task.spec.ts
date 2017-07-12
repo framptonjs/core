@@ -51,7 +51,7 @@ describe('Task', function() {
 
   describe('join', function() {
     it('should flatten nested Tasks', function(done) {
-      const task = Task.create((sinks) => {
+      const task = Task.create<void,Task<void,number,void>,void>((sinks) => {
         sinks.resolve(Task.create((sinks) => {
           sinks.resolve(5);
         }));

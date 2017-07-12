@@ -1,8 +1,7 @@
 import { curry } from '../../utils';
 
-
-export class Result<V,E> {
-  protected _value: V;
+export abstract class Result<V,E> {
+  protected _value: V | E;
 
   static fromThrowable<A,B>(fn: (a: A) => B): (a: A) => Result<B,string>;
   static fromThrowable<A,B,C>(fn: (a: A, b: B) => C): (a: A, b: B) => Result<C,string>;
@@ -26,19 +25,44 @@ export class Result<V,E> {
     return new Failure(val);
   }
 
+  abstract map<B>(mapping: (val: V) => B): Success<B> | Failure<E>;
+
+  abstract mapFailure<B>(mapping: (err: E) => B): Success<V> | Failure<B>;
+
+  abstract filter(predicate: (val: V) => boolean): Success<V> | Failure<V> | Failure<E>;
+
+  abstract fork<A,B>(success: (value: V) => A, _: (err: any) => B): A | B;
+
+  abstract isFailure(): boolean;
+
+  abstract isSuccess(): boolean;
+}
+
+export class Success<T> extends Result<T,void> {
+  _value: T;
+
+  static create<T>(val: T): Success<T> {
+    return new Success(val);
+  }
+
+  constructor(val: T) {
+    super();
+    this._value = val;
+  }
+
   toString(): string {
     return `Success(${this._value})`;
   }
 
-  map<B>(mapping: (val: V) => B): Success<B> {
+  map<B>(mapping: (val: T) => B): Success<B> {
     return new Success(mapping(this._value));
   }
 
-  mapFailure<B>(mapping: (err: any) => B): Success<V> {
+  mapFailure<B>(mapping: (err: any) => B): Success<T> {
     return new Success(this._value);
   }
 
-  filter(predicate: (val: V) => boolean): Result<V,V> {
+  filter(predicate: (val: T) => boolean): Success<T> | Failure<T> {
     if (predicate(this._value)) {
       return new Success(this._value);
     } else {
@@ -46,7 +70,7 @@ export class Result<V,E> {
     }
   }
 
-  fork<A,B>(success: (value: V) => A, _: (err: any) => B): A {
+  fork<A,B>(success: (value: T) => A, _: (err: any) => B): A {
     return success(this._value);
   }
 
@@ -60,21 +84,7 @@ export class Result<V,E> {
 }
 
 
-export class Success<T> extends Result<T,never> {
-  _value: T;
-
-  static create<T>(val: T): Success<T> {
-    return new Success(val);
-  }
-
-  constructor(val: T) {
-    super();
-    this._value = val;
-  }
-}
-
-
-export class Failure<T> extends Result<any,T> {
+export class Failure<T> extends Result<void,T> {
   _value: T;
 
   static create<T>(val: T): Failure<T> {

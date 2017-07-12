@@ -6,7 +6,7 @@ export type MaybePredicate<T> =
   (val: T) => boolean;
 
 
-export class Maybe<T> {
+export abstract class Maybe<T> {
   protected _value: T;
 
   static fromNullable<T>(val: T): Maybe<T> {
@@ -25,6 +25,38 @@ export class Maybe<T> {
     return new Just<T>(val);
   }
 
+  abstract ap<A,B>(this: Maybe<(val: A) => B>, maybe: Maybe<A>): Maybe<B>;
+
+  abstract join<A>(this: Maybe<Maybe<A>>): Maybe<A>;
+
+  abstract fork<B>(justFn: (val: T) => B, _: () => B): B;
+
+  abstract map<B>(mapping: MaybeMapping<T,B>): Maybe<B>;
+
+  abstract chain<B>(mapping: (val: T) => Maybe<B>): Maybe<B>;
+
+  abstract filter(predicate: MaybePredicate<T>): Maybe<T>;
+
+  abstract get(): T;
+
+  abstract getOrElse(defaultValue: T): T;
+
+  abstract isJust(): boolean;
+
+  abstract isNothing(): boolean;
+}
+
+
+export class Just<T> extends Maybe<T> {
+  static create<B>(val: B): Just<B> {
+    return new Just<B>(val);
+  }
+
+  constructor(val: T) {
+    super();
+    this._value = val;
+  }
+
   toString(): string {
     return `Just(${this._value})`;
   }
@@ -40,7 +72,7 @@ export class Maybe<T> {
    * @param {Frampton.Data.Maybe} mb
    * @returns {Frampton.Data.Maybe}
    */
-  ap<A,B>(this: Just<(val: A) => B>, maybe: Maybe<A>): Maybe<B> {
+  ap<A,B>(this: Maybe<(val: A) => B>, maybe: Maybe<A>): Maybe<B> {
     const self: Just<(val: A) =>B> = this;
     if (maybe.isJust()) {
       return new Just<B>(self._value((<Just<A>>maybe)._value));
@@ -176,18 +208,6 @@ export class Maybe<T> {
 }
 
 
-export class Just<T> extends Maybe<T> {
-  static create<B>(val: B): Just<B> {
-    return new Just<B>(val);
-  }
-
-  constructor(val: T) {
-    super();
-    this._value = val;
-  }
-}
-
-
 export class Nothing<T> extends Maybe<T> {
   static create<B>(): Nothing<B> {
     return new Nothing<B>();
@@ -201,23 +221,32 @@ export class Nothing<T> extends Maybe<T> {
     return nothingFn();
   }
 
-  join(): Nothing<T> {
-    return new Nothing<T>();
+  join<A>(this: Maybe<Maybe<A>>): Maybe<A> {
+    return new Nothing<A>();
   }
 
-  map<B>(_: MaybeMapping<T,B>): Nothing<B> {
+  map<B>(_: MaybeMapping<T,B>): Maybe<B> {
     return new Nothing<B>();
   }
 
-  filter(_: MaybePredicate<T>): Nothing<T> {
+  filter(_: MaybePredicate<T>): Maybe<T> {
     return new Nothing<T>();
   }
 
-  ap<A,B>(this: Maybe<(val: A) =>B>, _: Maybe<A>): Nothing<B> {
+  ap<A,B>(this: Maybe<(val: A) =>B>, _: Maybe<A>): Maybe<B> {
     return new Nothing<B>();
   }
 
-  chain<B>(_: (val: T) => Maybe<B>): Nothing<B> {
+  // ap<A,B>(this: Just<(val: A) => B>, maybe: Maybe<A>): Maybe<B> {
+  //   const self: Just<(val: A) =>B> = this;
+  //   if (maybe.isJust()) {
+  //     return new Just<B>(self._value((<Just<A>>maybe)._value));
+  //   } else {
+  //     return new Nothing<B>();
+  //   }
+  // }
+
+  chain<B>(_: (val: T) => Maybe<B>): Maybe<B> {
     return new Nothing<B>();
   }
 
